@@ -160,9 +160,15 @@ $scope.fillnewBox = function(box){
                        });
 
 
-                     $scope.g_charts.push(Highcharts.chart(box.id, {
+                     $scope.g_charts.push(Highcharts.stockChart(box.id, {
                               chart: {
                                   zoomType: 'x'
+                              },
+                              rangeSelector: {
+                                  enabled: false
+                              },
+                              navigator: {
+                                  enabled: false
                               },
                               title: {
                                   text: box.measurement
@@ -196,7 +202,7 @@ $scope.fillnewBox = function(box){
                                           },
                                           stops: [
                                               [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                              [1, '#FFFFFF']
                                           ]
                                       },
                                       marker: {
@@ -283,6 +289,7 @@ $scope.getCurrentMemory = function(){
             
           });
 }
+$scope.getCurrentMemory();
 
 $scope.getCurrentCPU = function(){
   
@@ -302,7 +309,7 @@ $scope.getCurrentCPU = function(){
             $scope.vm.currentCPUUsage = data.metrics.result[0].values[0][1];
           });
 }
-
+$scope.getCurrentCPU();
 
 $scope.getCPU_History = function(){
   
@@ -363,20 +370,20 @@ $scope.historyCPU = function(){
 
              });
 
-                       $scope.g_charts.push(Highcharts.chart('cpu_chart_new', {
+                       $scope.g_charts.push(Highcharts.stockChart('cpu_chart_new', {
                               chart: {
-                                  zoomType: 'x',
+                                  /*zoomType: 'x',*/
                                   events: {
                                       load: function () {
 
                                           
                                           var series = this.series[0];
                                           $scope.intervals.push($interval(function () {
-                                          $http({
+                                                
+                                                $http({
                                                   method  : 'POST',
                                                   url     : $scope.apis.monitoring,
-                                                  data:  {
-                                                   
+                                                  data:  {                                                 
 
                                                         "name": "vm_cpu_perc",
                                                         "start": ""+ new Date().toISOString(),
@@ -412,10 +419,14 @@ $scope.historyCPU = function(){
                                                   })
                                           }, 5000));
 
-
-
                                       }
                                     }
+                              },
+                              rangeSelector: {
+                                  enabled: false
+                              },
+                              navigator: {
+                                  enabled: false
                               },
                               title: {
                                   text: 'CPU usage over time'
@@ -449,7 +460,7 @@ $scope.historyCPU = function(){
                                           },
                                           stops: [
                                               [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                              [1, '#FFFFFF']
                                           ]
                                       },
                                       marker: {
@@ -475,9 +486,6 @@ $scope.historyCPU = function(){
           });
 
 }
-
-
-
 
 
 
@@ -521,7 +529,7 @@ $scope.historyRAM = function(){
 
              });
 
-                      $scope.g_charts.push(Highcharts.chart('ram_chart_new', {
+                      $scope.g_charts.push(Highcharts.stockChart('ram_chart_new', {
                               chart: {
                                   zoomType: 'x',
                                   events: {
@@ -573,18 +581,17 @@ $scope.historyRAM = function(){
 
                                                   })
 
-                                              
-
-
-
-
-
-                                          }, 5000));
-                                      
+                                          }, 5000));                                 
 
 
                                       }
                                     }
+                              },
+                              rangeSelector: {
+                                  enabled: false
+                              },
+                              navigator: {
+                                  enabled: false
                               },
                               title: {
                                   text: 'Memory usage over time'
@@ -642,9 +649,6 @@ $scope.historyRAM = function(){
                               }]
                           }));
           });
-
-
-
 }
 
 
@@ -704,15 +708,6 @@ $scope.drawGauges = function(){
         }, 4000));       
       }
 }
-
-/*$scope.drawTheChart = function(data_array,options,element){
-
-       var data = google.visualization.arrayToDataTable(data_array);
-       var options = options;
-       var chart = new google.visualization.AreaChart(document.getElementById(element));
-       chart.draw(data, options);
-       data.length= 0;
-}*/
 
 
 $scope.historyHardDisk = function(){
@@ -783,9 +778,15 @@ $scope.historyHardDisk = function(){
                       
                       });                  
             
-              $scope.g_charts.push(Highcharts.chart('disk_chart_new', {
+                      $scope.g_charts.push(Highcharts.stockChart('disk_chart_new', {
                               chart: {
                                   zoomType: 'x',
+                              },
+                              rangeSelector: {
+                                  enabled: false
+                              },
+                              navigator: {
+                                  enabled: false
                               },
                               title: {
                                   text: 'Disk usage over time'
@@ -894,6 +895,7 @@ $scope.historyHardDisk = function(){
       (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
       
       $scope.g_charts = [];
+
       $('.hchart').each(function(c){$(this).empty();});
       $('.highcharts-container').each(function(c){$(this).empty();});
       $scope.getVM();
@@ -912,8 +914,9 @@ $scope.historyHardDisk = function(){
           chart.destroy();
           chart = null;
         });
-        $scope.g_charts = [];
+        $scope.g_charts = null;
         $scope.intervals.forEach(function(interval){
+          console.log("Clear Interval "+interval);
           $interval.cancel(interval);
         })
       });

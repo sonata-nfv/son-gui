@@ -24,7 +24,6 @@ To contribute to the development of the SONATA gui you have to fork the reposito
  * jquery 2.2.3 (MIT)
  * grunt 0.4.5 (MIT)
 
-
 ## Installation
 
 Build Docker container image 

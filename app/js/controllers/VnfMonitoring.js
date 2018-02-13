@@ -219,7 +219,7 @@ $scope.removeBox = function(box){
             $http({
                 method  : 'GET',
                 url     : $scope.apis.gatekeeper.functions,
-                params  : {'status':'active','limit':40,'offset':0},
+                params  : {'status':'active','limit':40,'offset':0,'uuid':descriptor_reference},
                 headers : $rootScope.getGKHeaders()
                })
                 .success(function(data) {
@@ -238,30 +238,7 @@ $scope.removeBox = function(box){
                   console.error('Get functions Failed. Get Url: '+$scope.apis.gatekeeper.functions);
                   console.error(data);
                 })
-
-
-        $http({
-            method  : 'GET',
-            url     : $scope.apis.gatekeeper.functions,
-            params  : {'status':'active','limit':40,'offset':0,'uuid':descriptor_reference},
-            headers : $rootScope.getGKHeaders()
-        })
-            .success(function(data) {
-                console.log("TEST Functions Response");
-                console.log(data);
-
-                angular.forEach(data,function(d){
-                    if(descriptor_reference==d.uuid){
-                        $scope.descriptor = d;
-                        $scope.descriptor_not_found = 0;
-                    }
-                });
-
-            })
-            .error(function(data){
-                console.error('Get functions Failed. Get Url: '+$scope.apis.gatekeeper.functions);
-                console.error(data);
-            })
+        
     }
     $scope.toggleDetails = function(){
       $scope.view_details = !$scope.view_details;

@@ -238,7 +238,7 @@ $scope.removeBox = function(box){
                   console.error('Get functions Failed. Get Url: '+$scope.apis.gatekeeper.functions);
                   console.error(data);
                 })
-        
+
     }
     $scope.toggleDetails = function(){
       $scope.view_details = !$scope.view_details;

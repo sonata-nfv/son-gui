@@ -219,7 +219,7 @@ $scope.removeBox = function(box){
             $http({
                 method  : 'GET',
                 url     : $scope.apis.gatekeeper.functions,
-                params  : {'status':'active','limit':40,'offset':0,'uuid':descriptor_reference},
+                params  : {'status':'active','limit':40000,'offset':0,'uuid':descriptor_reference},
                 headers : $rootScope.getGKHeaders()
                })
                 .success(function(data) {

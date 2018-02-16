@@ -285,107 +285,104 @@ $scope.fillnewBox = function(box){
                   "&labels[][labeltag]=id";
 
         var m = Monitoring.getData(encodeURI(url));
-        m.then(function(datas){
-          
-                    $scope.data = [];
-                    if(datas.data[0]){
-                     datas.data[0].values.forEach(function(element, index) {
 
-                            var timestamp = $rootScope.FixTimestamp(element[0]);
-                            $scope.data.push([timestamp,parseFloat(element[1])]);
-                         
-                       });
+    m.then(function(data){
+
+        console.log("Monitoring new Log for: "+box.measurement);
+        console.log(data);
+
+        $scope.data = [];
+
+        if(data.data[0]){
+
+            $scope.series = [];
 
 
-                     console.log("I will check");
-                     if($scope.data.length>0){
-                      console.log("NAI EXW:"+$scope.data);
-                      console.log($scope.data);
-                      $scope.g_charts.push(Highcharts.stockChart(box.id, {
-                              chart: {
-                                  zoomType: 'x'
-                              },
-                              animation:false,
-                              rangeSelector: {
-                                  enabled: false
-                              },
-                              navigator: {
-                                  enabled: false
-                              },
-                              title: {
-                                  text: box.measurement
-                              },
-                              subtitle: {
-                                  text: document.ontouchstart === undefined ?
-                                          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-                              },
-                              xAxis: {
-                                  type: 'datetime'
-                              },
-                              yAxis: {
-                                  title: {
-                                      text: 'Values'
-                                  }
-                              },
-                              legend: {
-                                  enabled: false
-                              },
-                              credits: {
-                                enabled: false
-                              },
-                              plotOptions: {
-                                  area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, '#FFFFFF']
-                                          ]
-                                      },
-                                      marker: {
-                                          radius: 2
-                                      },
-                                      lineWidth: 1,
-                                      states: {
-                                          hover: {
-                                              lineWidth: 1
-                                          }
-                                      },
-                                      threshold: null
-                                  }
-                              },
+            $scope.compared = [];
+            console.log(data.data[0]);
+            for(p in data.data[0]['metric']){
+                console.log("P:"+p);
+                if(p!='exported_instance' && p!='exported_job' && p!='group' && p!='id' && p!='instance' && p!='job' && p!="__name__" ){
+                    $scope.compared.push(p);
+                }
+            }
 
-                              series: [{
-                                  type: 'line',
-                                  color: '#454e5d',
-                                  name: box.measurement,
-                                  data: $scope.data
-                              }]
-                          }));
-                     }else{
-                      
-                      $('#'+box.id).html('No data available');
-                     }
 
-                    }else{
-                      
-                      $('#'+box.id).html('No data available for '+box.measurement);
-                     
-                     }
+            angular.forEach(data.data,function(nline,nxidex){
+                var k = [];
+                nline.values.forEach(function(element, index) {
 
+                    var timestamp = $rootScope.FixTimestamp(element[0]);
+                    k.push([timestamp,parseFloat(element[1])]);
                 });
+                var name = '';
+                $scope.compared.forEach(function(tname,i){
+                    name = name+" "+nline['metric'][tname];
+                })
+                if($scope.compared.length<1){
+                    name = box.measurement;
+                }
+                $scope.series.push({'name':name,'data':k,type : 'line'});
+            });
 
 
+            $scope.g_charts.push(Highcharts.stockChart(box.id, {
+                chart: {
+                    zoomType: 'x'
+                },
+                rangeSelector: {
+                    enabled: false
+                },
+                navigator: {
+                    enabled: false
+                },
+                title: {
+                    text: box.measurement
+                },
+                subtitle: {
+                    text: document.ontouchstart === undefined ?
+                        'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Values'
+                    }
+                },
+                legend: {
+                    enabled: true
+                },
+                credits: {
+                    enabled: false
+                },
+                tooltip: {
+                    valueDecimals: 2
+                },
+                plotOptions: {
+                    area: {
+                        marker: {
+                            radius: 2
+                        },
+                        lineWidth: 1,
+                        states: {
+                            hover: {
+                                lineWidth: 1
+                            }
+                        },
+                        threshold: null
+                    }
+                },
 
+                series: $scope.series
+            }));
+        }else{
 
-            
+            $('#'+box.id).html('No data Available for '+box.measurement);
 
-
+        }
+    });
 
 
 
@@ -631,6 +628,9 @@ $scope.historyRAM = function(){
                                       text: 'RAM %'
                                   }
                               },
+                    tooltip: {
+                        valueDecimals: 2
+                    },
                               animation:false,
                                   rangeSelector: {
                                     enabled: false
@@ -646,18 +646,7 @@ $scope.historyRAM = function(){
                               },
                               plotOptions: {
                                   area: {
-                                      /*fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                          ]
-                                      },*/
+
                                       marker: {
                                           radius: 1
                                       },
@@ -670,7 +659,9 @@ $scope.historyRAM = function(){
                                       threshold: null
                                   }
                               },
-
+                            tooltip: {
+                                valueDecimals: 2
+                            },
                               series: [{
                                   type: 'line',
                                   color: '#454e5d',
@@ -725,6 +716,9 @@ $scope.historyCPU = function(){
                                   },
                                   navigator: {
                                     enabled: false
+                                  },
+                                  tooltip: {
+                                      valueDecimals: 2
                                   },
                                   events: {
                                       load: function () {
@@ -809,75 +803,6 @@ $scope.historyCPU = function(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           });
 
 }
@@ -887,23 +812,7 @@ $scope.historyCPU = function(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 $scope.historyHardDisk = function(){
-
-
 
 
         var start = new Date(new Date().getTime() - 15*60000).toISOString();
@@ -976,6 +885,9 @@ $scope.historyHardDisk = function(){
                               rangeSelector: {
                                   enabled: false
                               },
+                  tooltip: {
+                      valueDecimals: 2
+                  },
                               navigator: {
                                   enabled: false
                               },
@@ -1058,8 +970,6 @@ $scope.getCurrentCPU = function(){
 
 
     $scope.getRecords = function(){
-      
-    
 
                 var m = Monitoring.getRecords();
                 m.then(function(data){

@@ -290,6 +290,9 @@ $scope.getRamGraphNew = function(){
                                       text: 'RAM %'
                                   }
                               },
+                  tooltip: {
+                      valueDecimals: 2
+                  },
                               legend: {
                                   enabled: false
                               },
@@ -473,6 +476,9 @@ var start = new Date(new Date().getTime() - 30*60000).toISOString();
                               xAxis: {
                                   type: 'datetime'
                               },
+                  tooltip: {
+                      valueDecimals: 2
+                  },
                               yAxis: {
                                   title: {
                                       text: 'Cores'
@@ -642,6 +648,9 @@ var start = new Date(new Date().getTime() - 30*60000).toISOString();
                               xAxis: {
                                   type: 'datetime'
                               },
+                      tooltip: {
+                          valueDecimals: 2
+                      },
                               yAxis: {
                                   title: {
                                       text: 'Instances'

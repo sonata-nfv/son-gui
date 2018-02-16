@@ -124,6 +124,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                      $rootScope.checkTokenValidity();
            }
 
+
     $rootScope.getGKHeaders = function(){
       var header = {};
       header = {'Content-Type': 'application/json',

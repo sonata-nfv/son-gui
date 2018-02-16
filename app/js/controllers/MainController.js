@@ -112,6 +112,7 @@ SonataApp.controller('MainController',['$rootScope','$scope','$routeParams', '$l
                           'kpis'     :gk_url+'/kpis',
                           'users'    :gk_url+'/users',
                           'user_sessions':gk_url+'/sessions',
+                          'records_url':gk_url+'/records/functions'
                         }
                       };
               

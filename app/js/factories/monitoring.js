@@ -9,7 +9,7 @@ SonataApp.factory('Monitoring', function($http,$rootScope){
             },
             getRecords:function(){
             	return $http({
-            		url:'https://sp.int3.sonata-nfv.eu/api/v2/records/functions',
+            		url:$rootScope.apis.records_url,
             		method:'GET',
                     params:{
             		    'offset':0,

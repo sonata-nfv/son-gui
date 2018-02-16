@@ -9,7 +9,7 @@ SonataApp.factory('Monitoring', function($http,$rootScope){
             },
             getRecords:function(){
             	return $http({
-            		url:$rootScope.apis.records_url,
+            		url:$rootScope.apis.gatekeeper.records_url,
             		method:'GET',
                     params:{
             		    'offset':0,

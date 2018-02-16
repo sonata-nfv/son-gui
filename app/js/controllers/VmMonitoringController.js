@@ -27,7 +27,8 @@ partner consortium (www.sonata-nfv.eu).
 */
 
 SonataApp.controller('VmMonitoring',['$rootScope','$scope','$routeParams','$location','$http','$interval','Monitoring',function($rootScope,$scope, $routeParams, $location, $http,$interval,Monitoring){
-	
+
+    $scope.g_charts = [];
   $scope.vm = {};
   $scope.a_metrics = [];
   $scope.vm.currentMemoryUsage = 0;
@@ -200,18 +201,61 @@ $scope.fillnewBox = function(box){
                   "&name="+name+
                   "&step="+step+
                   "&labels[][labelid]="+$routeParams.name+
-                  "&labels[][labeltag]=id";
+                  "&labels[][labeltag]=id"+
+                    "&labels[][labelid]=vm"+
+                    "&labels[][labeltag]=exported_job";
 
         var m = Monitoring.getData(encodeURI(url));
         m.then(function(data){
-              
-                    $scope.data = [];
-                    if(data.data[0]){
-                     data.data[0].values.forEach(function(element, index) {
-          
+
+            console.log("Monitoring new Log for: "+box.measurement);
+            console.log(data);
+
+            $scope.data = [];
+
+            if(data.data[0]){
+
+                    $scope.series = [];
+
+
+                $scope.compared = [];
+                console.log(data.data[0]);
+                for(p in data.data[0]['metric']){
+                    console.log("P:"+p);
+                    if(p!='exported_instance' && p!='exported_job' && p!='group' && p!='id' && p!='instance' && p!='job' && p!="__name__" ){
+                        $scope.compared.push(p);
+                    }
+                }
+
+
+                angular.forEach(data.data,function(nline,nxidex){
+                        var k = [];
+                        nline.values.forEach(function(element, index) {
+
                             var timestamp = $rootScope.FixTimestamp(element[0]);
-                            $scope.data.push([timestamp,parseFloat(element[1])]);
-                       });
+                            k.push([timestamp,parseFloat(element[1])]);
+                        });
+                        var name = '';
+                        $scope.compared.forEach(function(tname,i){
+                            name = name+" "+nline['metric'][tname];
+                        })
+                        if($scope.compared.length<1){
+                            name = box.measurement;
+                        }
+                        $scope.series.push({'name':name,'data':k,type : 'line'});
+                    });
+                    console.log($scope.series);
+                console.log($scope.series);
+                console.log($scope.series);
+                console.log($scope.series);
+                console.log($scope.series);
+                console.log($scope.series);
+                console.log($scope.series);
+                     // data.data[0].values.forEach(function(element, index) {
+                     //
+                     //        var timestamp = $rootScope.FixTimestamp(element[0]);
+                     //        $scope.data.push([timestamp,parseFloat(element[1])]);
+                     //   });
 
 
                      $scope.g_charts.push(Highcharts.stockChart(box.id, {
@@ -240,25 +284,17 @@ $scope.fillnewBox = function(box){
                                   }
                               },
                               legend: {
-                                  enabled: false
+                                  enabled: true
                               },
+                         tooltip: {
+                             valueDecimals: 2
+                         },
                               credits: {
                                 enabled: false
                               },
                               plotOptions: {
                                   area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, '#FFFFFF']
-                                          ]
-                                      },
+
                                       marker: {
                                           radius: 2
                                       },
@@ -272,12 +308,7 @@ $scope.fillnewBox = function(box){
                                   }
                               },
 
-                              series: [{
-                                  type: 'area',
-                                  color: '#454e5d',
-                                  name: box.measurement,
-                                  data: $scope.data
-                              }]
+                              series: $scope.series
                           }));
                     }else{
                       
@@ -477,6 +508,9 @@ $scope.historyCPU = function(){
                               title: {
                                   text: 'CPU usage over time'
                               },
+                           tooltip: {
+                               valueDecimals: 2
+                           },
                               subtitle: {
                                   text: document.ontouchstart === undefined ?
                                           'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
@@ -497,18 +531,7 @@ $scope.historyCPU = function(){
                               },
                               plotOptions: {
                                   area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, '#FFFFFF']
-                                          ]
-                                      },
+
                                       marker: {
                                           radius: 2
                                       },
@@ -523,7 +546,7 @@ $scope.historyCPU = function(){
                               },
 
                               series: [{
-                                  type: 'area',
+                                  type: 'line',
                                   color: '#454e5d',
                                   name: 'CPU',
                                   data: $scope.prdata
@@ -637,20 +660,12 @@ $scope.historyRAM = function(){
                               credits: {
                                 enabled: false
                               },
+                          tooltip: {
+                              valueDecimals: 2
+                          },
                               plotOptions: {
                                   area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, '#FFFFFF']
-                                          ]
-                                      },
+
                                       marker: {
                                           radius: 2
                                       },
@@ -665,7 +680,7 @@ $scope.historyRAM = function(){
                               },
 
                               series: [{
-                                  type: 'area',
+                                  type: 'line',
                                   color: '#454e5d',
                                   name: 'RAM',
                                   data: $scope.ramdata
@@ -828,20 +843,12 @@ $scope.historyHardDisk = function(){
                               credits: {
                                 enabled: false
                               },
+                          tooltip: {
+                              valueDecimals: 2
+                          },
                               plotOptions: {
                                   area: {
-                                      fillColor: {
-                                          linearGradient: {
-                                              x1: 0,
-                                              y1: 0,
-                                              x2: 0,
-                                              y2: 1
-                                          },
-                                          stops: [
-                                              [0, '#262B33'],
-                                              [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                                          ]
-                                      },
+
                                       marker: {
                                           radius: 2
                                       },
@@ -911,7 +918,7 @@ $scope.historyHardDisk = function(){
     $scope.init = function(){
       (function(w){w = w || window; var i = w.setInterval(function(){},100000); while(i>=0) { w.clearInterval(i--); }})(/*window*/);
       
-      $scope.g_charts = [];
+
 
       $('.hchart').each(function(c){$(this).empty();});
       $('.highcharts-container').each(function(c){$(this).empty();});

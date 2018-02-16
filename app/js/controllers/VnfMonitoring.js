@@ -538,6 +538,8 @@ $scope.historyRAM = function(){
 
         var m = Monitoring.getData(encodeURI(url));
         m.then(function(datas){
+            console.log("HISTORY RAM");
+            console.log(datas);
 
           $scope.ramdata = [];
           $scope.vnf.currentMemoryUsage = 100-datas.data[0].values[datas.data[0].values.length-1][1];
@@ -600,11 +602,7 @@ $scope.historyRAM = function(){
                                                       $scope.vnf.currentMemoryUsage = 100-y;
                                                       $scope.drawGaugesRAM();
 
-                                                  })                                  
-
-
-
-
+                                                  })
 
                                           }, 5000));
                                       
@@ -696,10 +694,16 @@ $scope.historyCPU = function(){
 
           var m = Monitoring.getData(encodeURI(url));
           m.then(function(data){
-
+              console.log("HISTORY CPU");
+              console.log(data);
+              position = 0;
+              data.data.forEach(function(el,ind){
+                  if(el.metric.core=='cpu')
+                      position=ind;
+              })
             $scope.prdata = [];               
-            $scope.vnf.currentCPUUsage = data.data[0].values[data.data[0].values.length-1][1];                    
-            data.data[0].values.forEach(function(element, index) {
+            $scope.vnf.currentCPUUsage = data.data[position].values[data.data[position].values.length-1][1];
+            data.data[position].values.forEach(function(element, index) {
 
                   var timestamp = $rootScope.FixTimestamp(element[0]);
                   $scope.prdata.push([timestamp,parseFloat(element[1])]);

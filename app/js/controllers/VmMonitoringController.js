@@ -448,7 +448,13 @@ $scope.historyCPU = function(){
 
           $scope.prdata = [];
 
-          data.data[0].values.forEach(function(element, index) {
+            position = 0;
+            data.data.forEach(function(el,ind){
+                if(el.metric.core=='cpu')
+                    position=ind;
+            })
+
+          data.data[position].values.forEach(function(element, index) {
            
             var timestamp = $rootScope.FixTimestamp(element[0]);
             $scope.prdata.push([timestamp,parseFloat(element[1])]);
@@ -863,7 +869,7 @@ $scope.historyHardDisk = function(){
                               },
 
                               series:[{
-                                  type: 'area', color: '#454e5d',
+                                  type: 'line', color: '#454e5d',
                                   name: 'Disk',
                                   data: $scope.kam_disk
                               }]
